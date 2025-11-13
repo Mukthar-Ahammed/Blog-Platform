@@ -16,7 +16,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173", 
-      "https://your-frontend-name.vercel.app" 
+      "https://blog-platform-lwzn.vercel.app/" 
     ],
     credentials: true,
   })
