@@ -27,7 +27,7 @@ function SingleBlog() {
   const { title, description, content, author, createdAt } = selectedBlog;
   const displayText = description || content || "No description available";
 
-  // ✅ Dynamically set back link
+  //  Dynamically set back link
   const backLink = location.pathname.startsWith("/yourblogs")
     ? "/yourblogs"
     : "/blogs";
@@ -37,7 +37,7 @@ function SingleBlog() {
       <h1 className="text-3xl font-bold text-gray-800 mb-4">{title}</h1>
 
       <div className="flex justify-between items-center mb-6 text-gray-500 text-sm">
-        <span>✍️ {author?.username || author || "Unknown Author"}</span>
+        <span> {author?.username || author || "Unknown Author"}</span>
         <span>
           {createdAt
             ? new Date(createdAt).toLocaleDateString()

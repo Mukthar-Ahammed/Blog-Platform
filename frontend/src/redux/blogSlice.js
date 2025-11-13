@@ -21,12 +21,14 @@ export const createBlog = createAsyncThunk(
       return data.blog;
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to create blog");
-      return rejectWithValue(error.response?.data?.message || "Failed to create blog");
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to create blog"
+      );
     }
   }
 );
 
-// Fetch all blogs
+
 export const fetchBlogs = createAsyncThunk(
   "blogs/fetchBlogs",
   async (_, { rejectWithValue }) => {
@@ -34,7 +36,9 @@ export const fetchBlogs = createAsyncThunk(
       const { data } = await axiosInstance.get("/blog");
       return data.blogs || data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || "Failed to fetch blogs");
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch blogs"
+      );
     }
   }
 );
@@ -47,13 +51,29 @@ export const fetchBlogById = createAsyncThunk(
       const { data } = await axiosInstance.get(`/blog/${id}`);
       return data.blog || data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || "Failed to fetch blog");
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch blog"
+      );
     }
   }
 );
 
 
-
+export const updateBlog = createAsyncThunk(
+  "blogs/updateBlog",
+  async ({ id, updatedData }, { rejectWithValue }) => {
+    try {
+      const { data } = await axiosInstance.put(`/blog/${id}`, updatedData);
+      toast.success("Blog updated successfully!");
+      return data.blog; // assuming your backend returns updated blog in `data.blog`
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to update blog");
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to update blog"
+      );
+    }
+  }
+);
 
 
 export const deleteBlog = createAsyncThunk(
@@ -65,7 +85,9 @@ export const deleteBlog = createAsyncThunk(
       return id;
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to delete blog");
-      return rejectWithValue(error.response?.data?.message || "Failed to delete blog");
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to delete blog"
+      );
     }
   }
 );
@@ -85,7 +107,7 @@ const blogSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Create blog
+      
       .addCase(createBlog.pending, (state) => {
         state.loading = true;
       })
@@ -98,7 +120,7 @@ const blogSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Fetch all blogs
+      
       .addCase(fetchBlogs.pending, (state) => {
         state.loading = true;
       })
@@ -111,7 +133,7 @@ const blogSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Fetch single blog
+      
       .addCase(fetchBlogById.fulfilled, (state, action) => {
         state.selectedBlog = action.payload;
       })
@@ -119,8 +141,23 @@ const blogSlice = createSlice({
         state.error = action.payload;
       })
 
+      
+      .addCase(updateBlog.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateBlog.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedBlog = action.payload;
+        // also update it in the blogs array
+        const index = state.blogs.findIndex((b) => b._id === action.payload._id);
+        if (index !== -1) state.blogs[index] = action.payload;
+      })
+      .addCase(updateBlog.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
 
-      // Delete blog
+      
       .addCase(deleteBlog.fulfilled, (state, action) => {
         state.blogs = state.blogs.filter((b) => b._id !== action.payload);
       })
@@ -131,5 +168,4 @@ const blogSlice = createSlice({
 });
 
 export const { clearSelectedBlog } = blogSlice.actions;
-
 export default blogSlice.reducer;
