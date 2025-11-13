@@ -12,17 +12,18 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-// ✅ CORS should come BEFORE routes
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173", 
+      "https://your-frontend-name.vercel.app" 
+    ],
     credentials: true,
   })
 );
 
 const port = process.env.PORT;
 
-// ✅ Routes (AFTER middleware)
 app.use('/api/auth', AuthRoutes);
 app.use('/api/blog', BlogRoutes);
 
